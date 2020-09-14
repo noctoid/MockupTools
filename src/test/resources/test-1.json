@@ -1,0 +1,30 @@
+{
+  "stringValue": "this is a string",
+  "integerValue": 233,
+  "floatValue": 114.514,
+  "booleanValue": true,
+  "nullValue": null,
+  "array_1": [1,2,3],
+  "object_1": {
+    "innerString": "a string inside an object",
+    "innerInteger": 123,
+    "innerBoolean": false,
+    "innerNull": null,
+    "innerArray": [4,5,6]
+  },
+  "object_2": {
+    "a": {
+      "b": {
+        "c": {
+          "d": "many layers"
+        }
+      }
+    }
+  },
+  "array_2": [[1,2,3], [4,5,6], [7,8,9]],
+  "array_3": [
+    {"name": "a", "isValid": true},
+    {"name": "b", "isValid": false},
+    {"name": "c", "isValid": true}
+  ]
+}
