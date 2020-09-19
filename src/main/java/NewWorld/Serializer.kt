@@ -7,7 +7,9 @@ class Serializer {
         var result = JSONObject()
         var lines = s.split(";")
         for (line in lines) {
-            print(line)
+            var tokens = line.split("=")
+            print(line.trimMargin())
+            println(tokens)
         }
         return result
     }

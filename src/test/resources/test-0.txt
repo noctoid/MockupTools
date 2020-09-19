@@ -1,0 +1,17 @@
+stringValue="this is a string";
+floatValue=114.514;
+integerValue=233;
+booleanValue=true;
+nullValue=null;
+object_1.innerBoolean=false;
+object_1.innerNull=null;
+object_1.innerString="a string inside an object";
+object_1.innerInteger=123;
+object_2.a.b.c.d="many layers";
+object_3.L1.K1=1;
+object_3.L1.K2=2;
+array_1.0.0 = 0;
+array_1.1.0 = 1;
+array_1.1.1 = 1;
+array_1.2.0 = 2;
+array_1.2.1 = 2
