@@ -1,0 +1,33 @@
+{
+  "RunId": 1,
+  "GroupValues": [
+    "eat",
+    "shit",
+    "sleep"
+  ],
+  "RuleGroup": [
+    {
+      "attr1": "value1",
+      "attr2": 123,
+      "attr3": true,
+      "attr4": null,
+      "groupAttr1": [1,2,3]
+    }, {
+      "attr1": "value2",
+      "attr2": 234,
+      "attr3": false,
+      "attr4": null,
+      "groupAttr1": []
+    }
+  ],
+  "AnotherRule": {
+    "attr1": "value3",
+    "attr2": 345,
+    "attr3": true,
+    "attr4": null
+  },
+  "NestedArray": [
+    [1,2],
+    [3,4]
+  ]
+}

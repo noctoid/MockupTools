@@ -1,0 +1,6 @@
+AnotherRule.attr1="changed";
+RunId=233;
+GroupValues#1="don't shit";
+RuleGroup#0.attr1="modified value";
+RuleGroup#0.groupAttr1#1=666;
+NestedArray#1#0=0;
