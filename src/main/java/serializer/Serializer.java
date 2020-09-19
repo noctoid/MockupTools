@@ -1,18 +1,19 @@
 package serializer;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import org.apache.commons.io.FileUtils;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.io.File;
+import java.io.IOException;
+
+//import org.json.JSONArray;
+//import org.json.JSONObject;
 
 public class Serializer {
     private ScriptEngineManager scriptEngineManager;
@@ -26,31 +27,34 @@ public class Serializer {
     }
 
     public String serialize(JSONObject object, String parent) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (String key : object.keySet()) {
+            String completeKey = parent.equals("") ? key : parent + "." + key;
             if (object.get(key) instanceof JSONArray) {
-                result += this.serialize((JSONArray) object.get(key), parent == "" ? key : parent + "." + key);
+                result.append(this.serialize((JSONArray) object.get(key), completeKey));
             } else if (object.get(key) instanceof JSONObject) {
-                result += this.serialize((JSONObject) object.get(key), parent == "" ? key : parent + "." + key);
+                result.append(this.serialize((JSONObject) object.get(key), completeKey));
             } else {
-                if (parent != "") {
-                    result += parent;
-                    result += ".";
+                if (!parent.equals("")) {
+                    result.append(parent);
+                    result.append(".");
                 }
-                result += key;
-                result += "=";
+                result.append(key);
+                result.append("=");
 //                last layer of key value pair
                 if (object.get(key) instanceof String) {
-                    result += "\"";
-                    result += object.get(key);
-                    result += "\"";
+                    result.append("\"");
+                    result.append(object.get(key));
+                    result.append("\"");
+                } else if (object.get(key) == null) {
+                    result.append("null");
                 } else {
-                    result += object.get(key);
+                    result.append(object.get(key));
                 }
-                result += ";\n";
+                result.append(";\n");
             }
         }
-        return result;
+        return result.toString();
     }
 
     public String serialize(JSONArray array) {
@@ -58,22 +62,22 @@ public class Serializer {
     }
 
     public String serialize(JSONArray arr, String parent) {
-        String result = "";
-        for (int i = 0; i < arr.length(); i++) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < arr.size(); i++) {
             if (arr.get(i) instanceof JSONObject) {
-                result += this.serialize((JSONObject) arr.get(i), parent + "#" + i);
+                result.append(this.serialize((JSONObject) arr.get(i), parent + "#" + i));
             } else if (arr.get(i) instanceof JSONArray) {
-                result += this.serialize((JSONArray) arr.get(i), parent + "#" + i);
+                result.append(this.serialize((JSONArray) arr.get(i), parent + "#" + i));
             } else {
-                result += parent;
-                result += "#";
-                result += i;
-                result += "=";
-                result += arr.get(i);
-                result += ";\n";
+                result.append(parent);
+                result.append("#");
+                result.append(i);
+                result.append("=");
+                result.append(arr.get(i));
+                result.append(";\n");
             }
         }
-        return result;
+        return result.toString();
     }
 
 
@@ -87,9 +91,10 @@ public class Serializer {
             line = line.strip();
             try {
                 JSONObject jsonObject = this.buildObject(line);
-                System.out.println(jsonObject.toString(2));
+//                System.out.println(jsonObject);
 
-                result = mergeObject(result, jsonObject);
+                // TODO: after fastjson adaptation use putAll instead
+                mergeObject(result, jsonObject);
 
             } catch (ScriptException e) {
                 e.printStackTrace();
@@ -106,19 +111,20 @@ public class Serializer {
         // find first . or #
         int indexOfEqual = line.indexOf("=");
         int indexOfDot = line.indexOf(".");
-        int indexOf井 = line.indexOf("#");
+        int indexOfPound = line.indexOf("#");
         indexOfDot = indexOfDot == -1 ? line.length() + 1 : indexOfDot;
-        indexOf井 = indexOf井 == -1 ? line.length() + 1 : indexOf井;
+        indexOfPound = indexOfPound == -1 ? line.length() + 1 : indexOfPound;
 
-        if (Math.min(indexOfEqual, Math.min(indexOfDot, indexOf井)) == indexOfEqual) {
+        if (Math.min(indexOfEqual, Math.min(indexOfDot, indexOfPound)) == indexOfEqual) {
             // there is no more . or #, simple key value pair
+            System.out.println(this.javaEval(line.substring(indexOfEqual + 1)));
             jsonObject.put(
                     line.substring(0, indexOfEqual).strip(),
                     this.javaEval(line.substring(indexOfEqual + 1)));
 //            System.out.println(jsonObject);
             return jsonObject;
         } else {
-            if (indexOfDot < indexOf井) {
+            if (indexOfDot < indexOfPound) {
                 // . is the first thing found, generate
                 String key = line.substring(0, indexOfDot).strip();
                 String restOfLine = line.substring(indexOfDot+1);
@@ -127,7 +133,10 @@ public class Serializer {
             } else {
                 // # is the first thing found, array
                 // TODO 啊啊啊啊！！！！
-                jsonObject.accumulate(line.substring(0, indexOf井).strip(), line.substring(indexOf井+1));
+                System.out.println("啊啊啊啊啊啊");
+                String keyOfArray = line.substring(0, indexOfPound).strip();
+                String restOfLine = line.substring((indexOfPound+1));
+                jsonObject.put(keyOfArray, this.buildObject(restOfLine));
             }
         }
 
@@ -140,15 +149,17 @@ public class Serializer {
 
     private JSONObject mergeObject(JSONObject a, JSONObject b) {
         for (String key: b.keySet()) {
-            if (!a.has(key)) {
+            if (!a.containsKey(key)) {
                 a.put(key, b.get(key));
             } else {
                 if (b.get(key) instanceof JSONObject) {
                     a.put(key, mergeObject((JSONObject) a.get(key), (JSONObject) b.get(key)));
                 } else if (b.get(key) instanceof JSONArray) {
                     // TODO Array
+                    System.out.println("found array. skip for now");
                 } else {
                     // TODO String, Int, Float, Null
+                    System.out.println("found string/int/float/null, skip for now");
                 }
             }
         }
@@ -171,6 +182,6 @@ public class Serializer {
     }
 
     public JSONObject loadJsonFromString(String s) {
-        return new JSONObject(s);
+        return JSON.parseObject(s, Feature.OrderedField);
     }
 }
