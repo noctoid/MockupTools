@@ -29,5 +29,7 @@
   "NestedArray": [
     [1,2],
     [3,4]
-  ]
+  ],
+  "AttrWithLongLongLongName": "not exactly long value",
+  "NestedAttr": {"A": {"B": {"C": 123}}}
 }

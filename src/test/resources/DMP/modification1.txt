@@ -4,3 +4,5 @@ GroupValues#1="don't shit";
 RuleGroup#0.attr1="modified value";
 RuleGroup#0.groupAttr1#1=666;
 NestedArray#1#0=0;
+ShortName="modified with short name";
+SimpleName=0;

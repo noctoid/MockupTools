@@ -9,11 +9,16 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Scanner;
 
 public class Serializer {
     private ScriptEngineManager scriptEngineManager;
     private ScriptEngine scriptEngine;
+
+    private HashMap<String, String> renameMapping = new HashMap<>();
 
     public Serializer() {
     }
@@ -88,7 +93,7 @@ public class Serializer {
             // remove white space wrapping the line
             line = line.strip();
             try {
-                JSONObject jsonObject = this.buildObject(line);
+                JSONObject jsonObject = this.buildObject(this.applyRenameMapping(line));
                 mergeObject(result, jsonObject);
             } catch (ScriptException e) {
                 e.printStackTrace();
@@ -171,5 +176,35 @@ public class Serializer {
 
     public JSONObject loadJsonFromString(String s) {
         return JSONObject.parseObject(s, Feature.OrderedField);
+    }
+
+    public void loadRenameMappingFromFile(File file) {
+        try {
+            String fileContent = new Scanner(file).useDelimiter("\\Z").next();
+            this.loadRenameMappingFromString(fileContent);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadRenameMappingFromString(String s) {
+        String[] fileLines = s.split(";");
+        for (String fileLine: fileLines) {
+            fileLine = fileLine.strip();
+            String[] twoNames = fileLine.split("=");
+            String longName = twoNames[1].strip();
+            String shortName = twoNames[0].strip();
+            this.renameMapping.put(shortName, longName);
+        }
+        System.out.println(this.renameMapping);
+    }
+
+    private String applyRenameMapping(String line) {
+        for (String shortName: this.renameMapping.keySet()) {
+            if (line.contains(shortName)) {
+                line = line.replace(shortName, this.renameMapping.get(shortName));
+            }
+        }
+        return line;
     }
 }

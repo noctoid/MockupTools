@@ -18,6 +18,10 @@ public class Test {
         System.out.println("===========================================");
         Serializer serializer = new Serializer();
 
+        System.out.println("LoadRenameFile");
+        System.out.println("===========================================");
+        serializer.loadRenameMappingFromFile(new File("src/test/resources/rename_mapping_1.txt"));
+
         System.out.println("loadJsonFromFile");
         System.out.println("===========================================");
         String[] testJsonFiles = new String[]{
@@ -65,7 +69,8 @@ public class Test {
             String baselineFile = baselineAndModification[0];
             String modificationFile = baselineAndModification[1];
             JSONObject baseline = serializer.loadJsonFromFile(new File(baselineFile));
-            JSONObject modification = serializer.reform(new Scanner(new File(modificationFile)).useDelimiter("\\Z").next());
+            JSONObject modification = serializer.reform(
+                    new Scanner(new File(modificationFile)).useDelimiter("\\Z").next());
             System.out.println(JSONObject.toJSONString(baseline));
             System.out.println(JSONObject.toJSONString(modification));
             DMPUtil dmpUtil = new DMPUtil();
