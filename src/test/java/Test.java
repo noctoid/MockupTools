@@ -25,8 +25,8 @@ public class Test {
         System.out.println("loadJsonFromFile");
         System.out.println("===========================================");
         String[] testJsonFiles = new String[]{
-                "/home/yoko/workspace/MockupTools/src/test/resources/test-1.json",
-                "/home/yoko/workspace/MockupTools/src/test/resources/test-2.json"
+                "src/test/resources/test-1.json",
+                "src/test/resources/test-2.json"
         };
         ArrayList<JSONObject> testJsons = new ArrayList<>();
         for (String testJsonFile : testJsonFiles) {
@@ -46,8 +46,8 @@ public class Test {
         System.out.println("===========================================");
 
         String[] testTxtFiles = new String[] {
-                "/home/yoko/workspace/MockupTools/src/test/resources/test-0.txt",
-                "/home/yoko/workspace/MockupTools/src/test/resources/test-1.txt"
+                "src/test/resources/test-0.txt",
+                "src/test/resources/test-1.txt"
         };
 
         for (String txtFile: testTxtFiles) {
