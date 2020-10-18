@@ -89,7 +89,6 @@ public class Serializer {
         JSONObject result = new JSONObject();
         // TODO: parse
         rawFileContent = this.strip(this.removeNeglected(rawFileContent));
-//        System.out.println(rawFileContent);
         String[] lines = rawFileContent.split(";");
         // Process content line by line
         for (String line : lines) {
