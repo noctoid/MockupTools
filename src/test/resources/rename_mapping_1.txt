@@ -2,3 +2,4 @@ vln = VeryVeryVeryVeryLongLongLongName;
 alln=AnotherLongLongName;
 ShortName=AttrWithLongLongLongName;
 SimpleName=NestedAttr.A.B.C;
+Inner=InnerLongName;

@@ -6,3 +6,4 @@ RuleGroup#0.groupAttr1#1=666;
 NestedArray#1#0=0;
 ShortName="modified with short name";
 SimpleName=0;
+X.Inner="modified";

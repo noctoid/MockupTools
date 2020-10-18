@@ -1,6 +1,7 @@
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import dmpUtil.DMPUtil;
+import org.junit.jupiter.api.Test;
 import serializer.Serializer;
 
 import java.io.File;
@@ -8,10 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.function.Supplier;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class SerializerTest {
@@ -72,6 +70,7 @@ public class SerializerTest {
     @Test
     void DmpInputTest() {
         Serializer serializer = new Serializer();
+        serializer.loadRenameMappingFromFile(new File("src/test/resources/rename_mapping_1.txt"));
         String[] baseLineFiles = new String[] {
             "src/test/resources/DMP/baseline1.json;src/test/resources/DMP/modification1.txt",
         };

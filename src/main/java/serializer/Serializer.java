@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Serializer {
     private ScriptEngineManager scriptEngineManager;
@@ -87,11 +88,13 @@ public class Serializer {
     public JSONObject reform(String rawFileContent) {
         JSONObject result = new JSONObject();
         // TODO: parse
+        rawFileContent = this.strip(this.removeNeglected(rawFileContent));
+//        System.out.println(rawFileContent);
         String[] lines = rawFileContent.split(";");
         // Process content line by line
         for (String line : lines) {
             // remove white space wrapping the line
-            line = line.strip();
+            line = this.strip(line);
             try {
                 JSONObject jsonObject = this.buildObject(this.applyRenameMapping(line));
                 mergeObject(result, jsonObject);
@@ -118,19 +121,19 @@ public class Serializer {
         if (Math.min(indexOfEqual, Math.min(indexOfDot, indexOfPound)) == indexOfEqual) {
             // there is no more . or #, simple key value pair
             jsonObject.put(
-                    line.substring(0, indexOfEqual).strip(),
+                    this.strip(line.substring(0, indexOfEqual)),
                     this.javaEval(line.substring(indexOfEqual + 1)));
             return jsonObject;
         } else {
             if (indexOfDot < indexOfPound) {
                 // . is the first thing found, generate
-                String key = line.substring(0, indexOfDot).strip();
+                String key = this.strip(line.substring(0, indexOfDot));
                 String restOfLine = line.substring(indexOfDot+1);
 
                 jsonObject.put(key, this.buildObject(restOfLine));
             } else {
                 // # is the first thing found, array
-                String keyOfArray = line.substring(0, indexOfPound).strip();
+                String keyOfArray = this.strip(line.substring(0, indexOfPound));
                 String restOfLine = line.substring((indexOfPound+1));
                 jsonObject.put(keyOfArray, this.buildObject(restOfLine));
             }
@@ -157,6 +160,20 @@ public class Serializer {
             }
         }
         return a;
+    }
+
+
+    private String removeNeglected(String mockup) {
+        String pattern = "[(].+?[)]";
+        return Pattern.compile(pattern, Pattern.MULTILINE | Pattern.DOTALL).matcher(mockup).replaceAll("");
+    }
+
+
+    private String strip(String string) {
+        String leading = "^\\s+";
+        String trailing = "\\s+$";
+        return Pattern.compile(trailing).matcher(
+                Pattern.compile(leading).matcher(string).replaceAll("")).replaceAll("");
     }
 
     // do Eval operation using script engine since there is no simple eval() method in java
@@ -190,10 +207,10 @@ public class Serializer {
     public void loadRenameMappingFromString(String s) {
         String[] fileLines = s.split(";");
         for (String fileLine: fileLines) {
-            fileLine = fileLine.strip();
+            fileLine = this.strip(fileLine);
             String[] twoNames = fileLine.split("=");
-            String longName = twoNames[1].strip();
-            String shortName = twoNames[0].strip();
+            String longName = this.strip(twoNames[1]);
+            String shortName = this.strip(twoNames[0]);
             this.renameMapping.put(shortName, longName);
         }
         System.out.println(this.renameMapping);

@@ -31,5 +31,8 @@
     [3,4]
   ],
   "AttrWithLongLongLongName": "not exactly long value",
-  "NestedAttr": {"A": {"B": {"C": 123}}}
+  "NestedAttr": {"A": {"B": {"C": 123}}},
+  "X": {
+    "InnerLongName": "to be modified"
+  }
 }
